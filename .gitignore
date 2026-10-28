@@ -1,0 +1,17 @@
+# environment and editor
+.venv/
+.idea/
+__pycache__/
+*.pyc
+
+# dataset (8 GB, download from Zenodo) and third-party material
+data/
+literature/
+official_kit/
+
+# generated outputs
+submission.json
+
+# private working notes
+NOTES.md
+notebooks/
