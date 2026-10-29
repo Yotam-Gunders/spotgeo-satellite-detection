@@ -49,7 +49,7 @@ Each sequence is 5 grayscale frames of 640 × 480. The telescope tracks the Eart
 
 ![Raw frame vs. background-subtracted residual](docs/step1_background.png)
 
-*Left: a raw frame with uneven sky glow. Right: the same frame after subtracting the median background. Only compact sources remain, on flat noise.*
+*Each raw frame is split into a smooth background and a residual. The background (middle) is the sky glow, a brightness gradient across the field, estimated by a 31 × 31 median filter, which ignores anything as small as a star or a satellite. The residual (right) keeps only compact sources on flat noise, and that is where detection runs.*
 
 ### 2. Two physical priors, measured from the labels
 

@@ -9,7 +9,7 @@ from collections import Counter
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from pipeline import (find_satellites, build_tracks_fast, refine_v, star_points, star_mask, stack,
                       DATA, ROOT)
-from detect_fast import residual, find_blobs
+from detect_fast import residual, find_blobs, median_bg
 
 OUT = ROOT / "docs"
 anno = json.load(open(DATA / "train_anno.json"))
@@ -38,12 +38,13 @@ def show(ax, img, title, lo=50, hi=99.5):
 
 
 # 1. background removal
-def fig_background(seq=30):
+def fig_background(seq=1):
     imgs, res, P = load(seq)
     resid, noise = res[0]
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5.4), constrained_layout=True)
-    show(axes[0], imgs[0], "raw frame: sky glow, clouds, stars, satellites", 1, 99.5)
-    show(axes[1], np.clip(resid / noise, -3, 8), "after subtracting the 31x31 median background", 1, 99.9)
+    fig, axes = plt.subplots(1, 3, figsize=(20, 5.4), constrained_layout=True)
+    show(axes[0], imgs[0], "raw frame", 1, 99.5)
+    show(axes[1], median_bg(imgs[0]), "=  background (31x31 median)", 0, 100)
+    show(axes[2], np.clip(resid / noise, -3, 8), "+  residual: stars, satellites, noise", 1, 99.9)
     fig.savefig(OUT / "step1_background.png", dpi=80, bbox_inches="tight", pad_inches=0.15)
 
 
