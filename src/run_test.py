@@ -1,3 +1,4 @@
+"""Predict all 5,120 test sequences in parallel and write submission.json in the official format."""
 import json
 from multiprocessing import Pool
 from pipeline import find_satellites, ROOT
@@ -17,5 +18,6 @@ if __name__ == "__main__":
     with Pool(8) as pool:
         results = pool.map(predict, range(1, 5121))
     submission = [row for rows in results for row in rows]
-    json.dump(submission, open(ROOT / "submission.json", "w"))
+    with open(ROOT / "submission.json", "w") as fp:
+        json.dump(submission, fp)
     print(len(submission), "rows")

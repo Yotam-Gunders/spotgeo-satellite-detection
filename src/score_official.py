@@ -1,3 +1,4 @@
+"""Validate submission.json and score it against the test labels with the organizers' own validation.py."""
 import sys
 import json
 import jsonschema
@@ -12,6 +13,7 @@ import validation
 jsonschema.validate = lambda inst, schema: jsonschema.Draft7Validator(schema).validate(inst)
 
 sub = ROOT / "submission.json"
-validation.validate_json(json.load(open(sub)))
+with open(sub) as fp:
+    validation.validate_json(json.load(fp))
 score, mse = validation.compute_score(sub, DATA / "test_anno.json")
 print(f"valid submission   1-F1 {score:.4f}   F1 {1 - score:.4f}   MSE {mse:.2f}")

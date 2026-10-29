@@ -1,3 +1,6 @@
+"""SpotGEO satellite detection for one 5-frame sequence: find_satellites(seq) returns a list of
+(start position, velocity, members) constant-velocity tracks. See README.md for the stages.
+"""
 from PIL import Image
 import numpy as np
 from pathlib import Path

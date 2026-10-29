@@ -63,7 +63,7 @@ def fig_star_test(seq=30):
     ax.plot(pts[~is_star, 0], pts[~is_star, 1], "o", mfc="none", mec="lime", ms=8, mew=1.4,
             label=f"kept for satellite search ({(~is_star).sum()})")
     ax.plot(gt[:, 0], gt[:, 1], "s", mfc="none", mec="cyan", ms=14, mew=1.2, label="ground truth satellites")
-    ax.legend(loc="lower right", fontsize=10)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.01), ncol=3, fontsize=10, frameon=False)
     ax.set_title(f"Candidates in frame 1 (sequence {seq}) after the per-point star test", fontsize=12)
     fig.savefig(OUT / "step3_star_test.png", dpi=80, bbox_inches="tight", pad_inches=0.15)
 
@@ -79,8 +79,8 @@ def fig_velocities(seq=30):
                          label="search ring: 18-32 px/frame from the stars"))
     ax.plot(*v_star, "*", color="tomato", ms=18, label="star velocity (densest cluster)")
     sv = np.array([v for p0, v, m in final]).reshape(-1, 2)
-    ax.plot(sv[:, 0], sv[:, 1], "o", mfc="none", mec="blue", ms=11, mew=1.5, label=f"{len(sv)} confirmed satellites (all at the same velocity)")
-    ax.set_xlim(-60, 60)
+    ax.plot(sv[:, 0], sv[:, 1], "o", mfc="none", mec="blue", ms=11, mew=1.5, label=f"{len(sv)} detected satellites (all at the same velocity)")
+    ax.set_xlim(-60, 80)
     ax.set_ylim(60, -60)
     ax.set_aspect("equal")
     ax.set_xlabel("vx [px/frame]")

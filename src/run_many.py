@@ -1,8 +1,10 @@
+"""Evaluate the pipeline on training sequences 1 to 100 with the official metric."""
 import json
 from pipeline import find_satellites, DATA
 from metric import score_seq, f1
 
-anno = json.load(open(DATA / "train_anno.json"))
+with open(DATA / "train_anno.json") as fh:
+    anno = json.load(fh)
 GT = {}
 for a in anno:
     GT.setdefault(a["sequence_id"], {})[a["frame"]] = a["object_coords"]

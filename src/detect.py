@@ -1,3 +1,7 @@
+"""Background removal, noise estimate and connected-component candidates.
+
+residual() is the original scipy version (slow). find_blobs() is shared with detect_fast.py.
+"""
 import numpy as np
 from scipy.ndimage import median_filter, label, find_objects, center_of_mass, maximum
 

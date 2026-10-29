@@ -1,3 +1,6 @@
+"""Official SpotGEO metric (as implemented in the organizers' validation.py): per-frame Hungarian matching,
+tau = 10 px, eps = 3 px. F1 from summed TP/FN/FP; MSE summed over sequences.
+"""
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
@@ -36,6 +39,7 @@ def f1(tp, fn, fp):
     if tp == 0:
         return 0.0
     return 2 * tp / (2 * tp + fn + fp)
+
 
 if __name__ == "__main__":
     print(match_frame([[100, 100]], [[150, 100]]))
