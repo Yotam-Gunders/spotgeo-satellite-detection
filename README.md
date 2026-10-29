@@ -47,6 +47,10 @@ Each sequence is 5 grayscale frames of 640 × 480. The telescope tracks the Eart
 - **Candidates:** pixels above 4σ are grouped into connected components, and each component's intensity-weighted centroid becomes a candidate.
 - **Rejected components:** anything wider than 6 px (a star streak) and anything touching the border.
 
+![Raw frame vs. background-subtracted residual](docs/step1_background.png)
+
+*Left: a raw frame with uneven sky glow. Right: the same frame after subtracting the median background. Only compact sources remain, on flat noise.*
+
 ### 2. Two physical priors, measured from the labels
 
 Two facts about the training labels drive most of the later decisions:
@@ -54,11 +58,19 @@ Two facts about the training labels drive most of the later decisions:
 1. **All satellites in a sequence move with almost the same velocity.** The median spread is 0.2 px/frame, because they all sit on the geostationary belt.
 2. **Their velocity relative to the stars is almost constant, about 26.7 px/frame** (5th to 95th percentile: 21.8 to 27.1). This is the Earth's rotation as seen by the telescope.
 
+<p align="center"><img src="docs/step2_velocities.png" width="520" alt="Velocities of all track hypotheses"></p>
+
+*Every pair of candidates gives a velocity hypothesis (grey). The stars form one dense cluster (red star). All six real satellites share a single velocity (blue circle) inside the ring 18 to 32 px/frame away from the stars (orange), which is where the search is restricted.*
+
 ### 3. Star velocity and per-point star removal (`pipeline.py`)
 
 - **Track hypotheses:** every pair of candidates in two different frames defines a constant-velocity hypothesis, which is kept if at least 3 frames have a candidate within 1.5 px of its prediction. This is a hypothesize-and-verify scheme in the RANSAC and Hough family.
 - **Star velocity:** the most common hypothesis velocity, refined with the median of nearby frame-to-frame displacements.
 - **Star test:** a candidate is labelled a star if any other frame has a candidate at the position the star velocity predicts (within 2.5 px). Testing each point individually removes far fewer satellite points than deleting every member of a star-like track.
+
+![Candidates after the per-point star test](docs/step3_star_test.png)
+
+*Red crosses are candidates identified as stars and removed. Green circles are candidates kept for the satellite search. Cyan squares are the labelled satellites, and all of them survive.*
 
 ### 4. Satellite tracks (`pipeline.py`)
 
@@ -77,6 +89,10 @@ When at least one satellite is confirmed, its velocity predicts the velocity of 
 - **Stacking:** the 5 noise-normalized residual frames are shifted along that velocity, over a 3 × 3 grid of ±1 px/frame around it, and summed. A satellite moving at that velocity adds up 5×, while the noise only adds up √5×.
 - **Star suppression:** bright star streaks are masked first, and residuals are clipped at ±3σ so that a single bright pixel can't dominate.
 - **Accepting a peak:** it needs about 11σ of stacked signal, signal in at least 4 of the 5 frames, and no single frame contributing more than 60% of it.
+
+![Shift-and-add stacking reveals a faint satellite](docs/step5_stacking.png)
+
+*Each panel is a 41 × 41 px window centred on the predicted position, on the same noise scale. The satellite is barely distinguishable in single frames, but stands out clearly once the five frames are aligned along its velocity and summed.*
 
 ### Progression on the tuning set
 
@@ -147,7 +163,7 @@ src/
   score_official.py  run the official validator and scorer
   test_median.py     unit test: fast median == reference median
   test_tracks.py     unit test: fast hypothesis builder == reference
-explore/             early exploration scripts and the README figure
+explore/             early exploration scripts and the README figures (make_figure.py, make_figures.py)
 docs/                figures
 ```
 
